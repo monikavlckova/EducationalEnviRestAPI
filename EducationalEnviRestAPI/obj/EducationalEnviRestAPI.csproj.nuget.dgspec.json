@@ -1,29 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\Source\\Repos\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj": {}
+    "C:\\Users\\Monika\\RiderProjects\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\Source\\Repos\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj": {
+    "C:\\Users\\Monika\\RiderProjects\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\Source\\Repos\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj",
+        "projectUniqueName": "C:\\Users\\Monika\\RiderProjects\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj",
         "projectName": "EducationalEnviRestAPI",
-        "projectPath": "C:\\Users\\Admin\\Source\\Repos\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\Source\\Repos\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\obj\\",
+        "projectPath": "C:\\Users\\Monika\\RiderProjects\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\EducationalEnviRestAPI.csproj",
+        "packagesPath": "C:\\Users\\Monika\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Monika\\RiderProjects\\EducationalEnviRestAPI\\EducationalEnviRestAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Monika\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://pkgs.dev.azure.com/nxtsoft/c5ae236d-bbb7-49ae-bca1-7f60ee74e763/_packaging/NXTSoftDevOps/nuget/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
@@ -41,11 +38,17 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "Microsoft.EntityFrameworkCore": {
+            "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
               "version": "[7.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
               "version": "[7.0.0, )"
             },
@@ -60,7 +63,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -72,7 +76,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\Monika\\.dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
         }
       }
     }
