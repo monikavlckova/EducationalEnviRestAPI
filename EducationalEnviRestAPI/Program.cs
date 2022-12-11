@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //builder.Services.AddDbContext<UsersAPIDbContext>(options => options.UseInMemoryDatabase("EduEnviDb"));
-builder.Services.AddDbContext<UsersAPIDbContext>(options => 
+builder.Services.AddDbContext<EduEnviAPIDbContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("EduEnviApiConnectionString")));
 
 var app = builder.Build();

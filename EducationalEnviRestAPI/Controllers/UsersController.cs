@@ -12,9 +12,9 @@ namespace EducationalEnviRestAPI.Controllers;
 
 public class UsersController : Controller
 {
-    private readonly UsersAPIDbContext dbContext;
+    private readonly EduEnviAPIDbContext dbContext;
 
-    public UsersController(UsersAPIDbContext dbContext)
+    public UsersController(EduEnviAPIDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
