@@ -1,8 +1,9 @@
-﻿namespace EducationalEnviRestAPI.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public class Teacher
+namespace EducationalEnviRestAPI.Models;
+
+[Table("Teacher")]
+public class Teacher : User
 {
-    public Guid Id { get; set; }
     public string Email { get; set; }
-    
 }
