@@ -1,8 +1,13 @@
-﻿namespace EducationalEnviRestAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EducationalEnviRestAPI.Models;
 
 public class Taskk
 {
-    public Guid Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
     
     public String Name { get; set; }
     public String Text { get; set; }

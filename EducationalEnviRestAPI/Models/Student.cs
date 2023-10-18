@@ -5,5 +5,5 @@ namespace EducationalEnviRestAPI.Models;
 [Table("Student")]
 public class Student : User
 {
-    public Guid ClassroomId { get; set; }
+    public int ClassroomId { get; set; }
 }

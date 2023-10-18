@@ -23,8 +23,8 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
+    [Route("{id:int}")]
+    public async Task<IActionResult> Get([FromRoute] int id)
     {
         var user = await dbContext.Users.FindAsync(id);
 
@@ -33,12 +33,11 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    [HttpPost]
+    [HttpPut]
     public async Task<IActionResult> Add(User addUser)
     {
         var user = new User()
         {
-            Id = Guid.NewGuid(),
             Name = addUser.Name,
             LastName = addUser.LastName,
             UserName = addUser.UserName,
@@ -51,9 +50,9 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    [HttpPut]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Update([FromRoute] Guid id, User updateUser)
+    [HttpPost]
+    [Route("{id:int}")]
+    public async Task<IActionResult> Update([FromRoute] int id, User updateUser)
     {
         var user = await dbContext.Users.FindAsync(id);
 
@@ -69,8 +68,8 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    [Route("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var user = await dbContext.Users.FindAsync(id);
 

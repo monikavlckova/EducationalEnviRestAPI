@@ -16,18 +16,11 @@ public class StudentsGroupsController : ControllerBase
         this.dbContext = dbContext;
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        return Ok(await dbContext.StudentsGroups.ToListAsync());
-    }
-
     [HttpPut]
-    public async Task<IActionResult> AddStudentToGroup(Guid studentId, Guid groupId)
+    public async Task<IActionResult> AddStudentToGroup(int studentId, int groupId)
     {
         var studentGroup = new StudentGroup()
         {
-            Id = Guid.NewGuid(),
             StudentId = studentId,
             GroupId = groupId
         };
@@ -39,8 +32,8 @@ public class StudentsGroupsController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> DeleteStudentFromGroup([FromRoute] Guid id)
+    [Route("{id:int}")]
+    public async Task<IActionResult> DeleteStudentFromGroup([FromRoute] int id)
     {
         var studentGroup = await dbContext.StudentsGroups.FindAsync(id);
 

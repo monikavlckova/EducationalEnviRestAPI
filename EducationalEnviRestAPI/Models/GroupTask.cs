@@ -1,8 +1,13 @@
-﻿namespace EducationalEnviRestAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EducationalEnviRestAPI.Models;
 
 public class GroupTask
 {
-    public Guid Id { get; set; }
-    public Guid GroupId { get; set; }
-    public Guid TaskId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public int GroupId { get; set; }
+    public int TaskId { get; set; }
 }

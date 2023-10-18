@@ -14,6 +14,7 @@ public class EduEnviAPIDbContext : DbContext
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Classroom> Classrooms { get; set; }
+    public DbSet<ClassroomTask> ClassroomsTasks { get; set; }
     public DbSet<Taskk> Tasks { get; set; }
     public DbSet<StudentTask> StudentsTasks { get; set; }
     public DbSet<GroupTask> GroupsTasks { get; set; }
@@ -47,6 +48,16 @@ public class EduEnviAPIDbContext : DbContext
             .HasForeignKey("GroupId");
         
         modelBuilder.Entity<GroupTask>()
+            .HasOne(typeof(Taskk))
+            .WithMany()
+            .HasForeignKey("TaskId");
+        
+        modelBuilder.Entity<ClassroomTask>()
+            .HasOne(typeof(Classroom))
+            .WithMany()
+            .HasForeignKey("ClassroomId");
+        
+        modelBuilder.Entity<ClassroomTask>()
             .HasOne(typeof(Taskk))
             .WithMany()
             .HasForeignKey("TaskId");

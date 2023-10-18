@@ -17,41 +17,14 @@ public class StudentsController : ControllerBase
     }
 
     [HttpGet]
-    [Route("getAll")]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await dbContext.Students.ToListAsync());
     }
 
     [HttpGet]
-    [Route("getAllInClass/{classroomId:guid}")]
-    public async Task<IActionResult> GetAllInClass([FromRoute] Guid classroomId)
-    {
-        var query = dbContext.Students.AsQueryable();
-        query = query.Where(student => student.ClassroomId.Equals(classroomId));
-        return Ok(await query.ToListAsync());
-    }
-
-    [HttpGet]
-    [Route("getAllInGroup/{groupId:guid}")]
-    public async Task<IActionResult> GetAllInGroup([FromRoute] Guid groupId)
-    {
-        var result = (from std in dbContext.Students.AsQueryable() 
-                                             join sg in dbContext.StudentsGroups 
-                                                 on std.Id equals sg.StudentId 
-                                             where sg.GroupId == groupId
-                                             select new { std });
-
-        //var queryS = dbContext.Students.AsQueryable();
-        //var querySg = dbContext.StudentsGroups.AsQueryable().Where(sg => sg.GroupId == groupId);
-        //queryS = queryS.Join(querySg, s => s.Id, sg => sg.StudentId, (s, sg) => s);
-
-        return Ok(await result.ToListAsync());
-    }
-    
-    [HttpGet]
-    [Route("get/{id:guid}")]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
+    [Route("{id:int}")]
+    public async Task<IActionResult> Get([FromRoute] int id)
     {
         var student = await dbContext.Students.FindAsync(id);
 
@@ -62,8 +35,47 @@ public class StudentsController : ControllerBase
 
         return Ok(student);
     }
+    
+    [HttpGet]
+    [Route("getAllGroups/{id:int}")]
+    public async Task<IActionResult> GetAllGroups([FromRoute] int id)
+    {
+        var result = (from gr in dbContext.Groups.AsQueryable() 
+            join sg in dbContext.StudentsGroups
+                on gr.Id equals sg.GroupId 
+            where sg.StudentId == id
+            select new { gr.Id, gr.ClassroomId, gr.Name });
+        
+        return Ok(await result.ToListAsync());
+    }
+    
+    [HttpGet]
+    [Route("getAllTasks/{id:int}")]
+    public async Task<IActionResult> GetAllTasks([FromRoute] int id)
+    {
+        var result = (from task in dbContext.Tasks.AsQueryable() 
+            join st in dbContext.StudentsTasks 
+                on task.Id equals st.TaskId 
+            where st.StudentId == id
+            select new { task.Id, task.Name, task.Text });
+        
+        return Ok(await result.ToListAsync());
+    }
+    
+    /*[HttpGet]
+    [Route("{studentId:int}")]
+    public async Task<IActionResult> GetAllGroupsTasks([FromRoute] int studentId)
+    {
+        var result = (from task in dbContext.Tasks.AsQueryable()
+            join gt in dbContext.GroupsTasks on task.Id equals gt.TaskId
+            join sg in dbContext.StudentsGroups on sg.StudentId equals studentId
+            select new { task });
 
-    [HttpPost]
+
+        return Ok(await result.ToListAsync());
+    }*/
+
+    [HttpPut]
     public async Task<IActionResult> Add(Student addStudent)
     {
         var student = new Student()
@@ -82,9 +94,9 @@ public class StudentsController : ControllerBase
         return Ok(student);
     }
 
-    [HttpPut]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Update([FromRoute] Guid id, Student updateStudent)
+    [HttpPost]
+    [Route("{id:int}")]
+    public async Task<IActionResult> Update([FromRoute] int id, Student updateStudent)
     {
         var student = await dbContext.Students.FindAsync(id);
 
@@ -101,8 +113,8 @@ public class StudentsController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    [Route("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var student = await dbContext.Students.FindAsync(id);
 

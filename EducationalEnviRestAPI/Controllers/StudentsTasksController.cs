@@ -7,27 +7,20 @@ namespace EducationalEnviRestAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentsTaskController : ControllerBase
+public class StudentsTasksController : ControllerBase
 {
     private readonly EduEnviAPIDbContext dbContext;
 
-    public StudentsTaskController(EduEnviAPIDbContext dbContext)
+    public StudentsTasksController(EduEnviAPIDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
-    
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        return Ok(await dbContext.StudentsTasks.ToListAsync());
-    }
 
     [HttpPut]
-    public async Task<IActionResult> AddTaskToStudent(Guid taskId, Guid studentId)
+    public async Task<IActionResult> AddTaskToStudent(int taskId, int studentId)
     {
         var studentTask = new StudentTask()
         {
-            Id = Guid.NewGuid(),
             StudentId = studentId,
             TaskId = taskId
         };
@@ -39,8 +32,8 @@ public class StudentsTaskController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> DeleteStudentTask([FromRoute] Guid id)
+    [Route("{id:int}")]
+    public async Task<IActionResult> DeleteStudentTask([FromRoute] int id)
     {
         var studentTask = await dbContext.StudentsTasks.FindAsync(id);
 

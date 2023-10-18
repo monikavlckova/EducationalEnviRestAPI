@@ -1,8 +1,13 @@
-﻿namespace EducationalEnviRestAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EducationalEnviRestAPI.Models;
 
 public class StudentGroup
 {
-    public Guid Id { get; set; }
-    public Guid StudentId { get; set; }
-    public Guid GroupId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public int StudentId { get; set; }
+    public int GroupId { get; set; }
 }

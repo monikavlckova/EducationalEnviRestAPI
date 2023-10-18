@@ -21,8 +21,35 @@ public class TeachersController : ControllerBase
     {
         return Ok(await dbContext.Teachers.ToListAsync());
     }
+
+    [HttpGet]
+    [Route("{id:int}")]
+    public async Task<IActionResult> Get([FromRoute] int id)
+    {
+        var teacher = await dbContext.Teachers.FindAsync(id);
+
+        if (teacher == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(teacher);
+    }
     
-    [HttpPost]
+    [HttpGet]
+    [Route("getAllClassrooms/{id:int}")]
+    public async Task<IActionResult> GetAllClassrooms([FromRoute] int id)
+    {
+        var result = (from c in dbContext.Classrooms.AsQueryable() 
+            join t in dbContext.Teachers
+                on c.TeacherId equals t.Id 
+            where t.Id == id
+            select new { c.Id, c.TeacherId, c.Name });
+        
+        return Ok(await result.ToListAsync());
+    }
+
+    [HttpPut]
     public async Task<IActionResult> Add(Teacher addTeacher)
     {
         var teacher = new Teacher()
@@ -41,23 +68,9 @@ public class TeachersController : ControllerBase
         return Ok(teacher);
     }
     
-    [HttpGet]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
-    {
-        var teacher = await dbContext.Teachers.FindAsync(id);
-
-        if (teacher == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(teacher);
-    }
-    
-    [HttpPut]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Update([FromRoute] Guid id, Teacher updateTeacher)
+    [HttpPost]
+    [Route("{id:int}")]
+    public async Task<IActionResult> Update([FromRoute] int id, Teacher updateTeacher)
     {
         var teacher = await dbContext.Teachers.FindAsync(id);
 
@@ -74,8 +87,8 @@ public class TeachersController : ControllerBase
     }
 
     [HttpDelete]
-    [Route("{id:guid}")]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    [Route("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var teacher = await dbContext.Teachers.FindAsync(id);
 

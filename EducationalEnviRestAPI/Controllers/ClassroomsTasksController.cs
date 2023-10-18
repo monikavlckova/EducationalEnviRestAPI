@@ -7,40 +7,40 @@ namespace EducationalEnviRestAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GroupsTasksController : ControllerBase
+public class ClassroomsTasksController : ControllerBase
 {
     private readonly EduEnviAPIDbContext dbContext;
 
-    public GroupsTasksController(EduEnviAPIDbContext dbContext)
+    public ClassroomsTasksController(EduEnviAPIDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
     
     [HttpPut]
-    public async Task<IActionResult> AddTaskToGroup(int taskId, int groupId)
+    public async Task<IActionResult> AddTaskToClassroom(int taskId, int classroomId)
     {
-        var groupTask = new GroupTask()
+        var classroomTask = new ClassroomTask()
         {
-            GroupId = groupId,
+            ClassroomId = classroomId,
             TaskId = taskId
         };
 
-        await dbContext.GroupsTasks.AddAsync(groupTask);
+        await dbContext.ClassroomsTasks.AddAsync(classroomTask);
         await dbContext.SaveChangesAsync();
 
-        return Ok(groupTask);
+        return Ok(classroomTask);
     }
 
     [HttpDelete]
     [Route("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var groupTask = await dbContext.GroupsTasks.FindAsync(id);
+        var classroomTask = await dbContext.ClassroomsTasks.FindAsync(id);
 
-        if (groupTask == null) return NotFound();
-        dbContext.Remove(groupTask);
+        if (classroomTask == null) return NotFound();
+        dbContext.Remove(classroomTask);
         await dbContext.SaveChangesAsync();
 
-        return Ok(groupTask);
+        return Ok(classroomTask);
     }
 }
