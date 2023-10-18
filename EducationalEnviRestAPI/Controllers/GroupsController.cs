@@ -2,7 +2,6 @@
 using EducationalEnviRestAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace EducationalEnviRestAPI.Controllers;
 
@@ -57,10 +56,9 @@ public class GroupsController : ControllerBase
     public async Task<IActionResult> GetAllStudentsFromClassroomNotInGorup([FromRoute] int groupId, [FromRoute] int classroomId)
     {
         var result = (from std in dbContext.Students.AsQueryable() 
-            where not exists (from std in dbContext.Students.AsQueryable() 
             join sg in dbContext.StudentsGroups 
                 on std.Id equals sg.StudentId 
-            where sg.GroupId != groupId && std.ClassroomId == classroomId)
+            where sg.GroupId != groupId && std.ClassroomId == classroomId
             select new { std.Id, std.Name, std.LastName, std.UserName, std.ClassroomId, std.Password });
         return Ok(await result.ToListAsync());
     }
