@@ -1,4 +1,5 @@
 ﻿using EducationalEnviRestAPI.Models;
+using EducationalEnviRestAPI.Models.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationalEnviRestAPI.Data;
@@ -9,7 +10,7 @@ public class EduEnviAPIDbContext : DbContext
     {
     }
 
-    public DbSet<User> Users { get; set; }
+    //public DbSet<User> Users { get; set; }
     public DbSet<Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<Group> Groups { get; set; }
@@ -22,69 +23,24 @@ public class EduEnviAPIDbContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Student>()
-            .HasOne(typeof(User))
-            .WithMany()
-            .HasForeignKey("Id");
+        modelBuilder.ApplyConfiguration(new ClassroomConfiguration());
+        modelBuilder.ApplyConfiguration(new ClassroomTaskConfiguration());
+        modelBuilder.ApplyConfiguration(new GroupConfiguration());
+        modelBuilder.ApplyConfiguration(new GroupTaskConfiguration());
+        modelBuilder.ApplyConfiguration(new StudentConfiguration());
+        modelBuilder.ApplyConfiguration(new StudentGroupConfiguration());
+        modelBuilder.ApplyConfiguration(new StudentTaskConfiguration());
         
         modelBuilder.Entity<Teacher>()
-            .HasOne(typeof(User))
-            .WithMany()
-            .HasForeignKey("Id");
+            .HasIndex(x => x.Email)
+            .IsUnique();
         
-       /* modelBuilder.Entity<Classroom>()
-            .HasOne(typeof(Teacher))
-            .WithMany()
-            .HasForeignKey("TeacherId");
-        
-        modelBuilder.Entity<Group>()
-            .HasOne(typeof(Teacher))
-            .WithMany()
-            .HasForeignKey("TeacherId");*/
-        
-        modelBuilder.Entity<GroupTask>()
-            .HasOne(typeof(Group))
-            .WithMany()
-            .HasForeignKey("GroupId");
-        
-        modelBuilder.Entity<GroupTask>()
-            .HasOne(typeof(Taskk))
-            .WithMany()
-            .HasForeignKey("TaskId");
-        
-        modelBuilder.Entity<ClassroomTask>()
-            .HasOne(typeof(Classroom))
-            .WithMany()
-            .HasForeignKey("ClassroomId");
-        
-        modelBuilder.Entity<ClassroomTask>()
-            .HasOne(typeof(Taskk))
-            .WithMany()
-            .HasForeignKey("TaskId");
+        modelBuilder.Entity<Teacher>()
+            .HasIndex(x => x.UserName)
+            .IsUnique();
         
         modelBuilder.Entity<Student>()
-            .HasOne(typeof(Classroom))
-            .WithMany()
-            .HasForeignKey("ClassroomId");
-        
-       /* modelBuilder.Entity<StudentGroup>()
-            .HasOne(typeof(Student))
-            .WithMany()
-            .HasForeignKey("StudentId");
-        
-        modelBuilder.Entity<StudentGroup>()
-            .HasOne(typeof(Group))
-            .WithMany()
-            .HasForeignKey("GroupId");
-        
-        modelBuilder.Entity<StudentTask>()
-            .HasOne(typeof(Student))
-            .WithMany()
-            .HasForeignKey("StudentId");
-        
-        modelBuilder.Entity<StudentTask>()
-            .HasOne(typeof(Taskk))
-            .WithMany()
-            .HasForeignKey("TaskId");*/
+            .HasIndex(x => x.UserName)
+            .IsUnique();
     }
 }

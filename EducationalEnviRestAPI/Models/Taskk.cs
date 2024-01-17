@@ -8,7 +8,7 @@ public class Taskk
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    
-    public String Name { get; set; }
+    [Column(TypeName = "varchar(50)")] public String Name { get; set; }
     public String Text { get; set; }
+    public string? ImagePath { get; set; }
 }

@@ -16,28 +16,37 @@ public class GroupsTasksController : ControllerBase
         this.dbContext = dbContext;
     }
     
-    [HttpPut]
-    public async Task<IActionResult> AddTaskToGroup(int taskId, int groupId)
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
     {
-        var groupTask = new GroupTask()
-        {
-            GroupId = groupId,
-            TaskId = taskId
-        };
+        return Ok(await dbContext.GroupsTasks.ToListAsync());
+    }
+    
+    [HttpPut]
+    public async Task<IActionResult> AddTaskToGroup(GroupTask addGroupTask )
+    {
+        if (addGroupTask is null) throw new ArgumentNullException(nameof(addGroupTask));
 
-        await dbContext.GroupsTasks.AddAsync(groupTask);
+        var existingGroup = await dbContext.Groups.FindAsync(addGroupTask.GroupId);
+        if (existingGroup == null) return BadRequest("Group with the specified Id not found.");
+
+        var existingTask = await dbContext.Tasks.FindAsync(addGroupTask.TaskkId);
+        if (existingTask == null) return BadRequest("Task with the specified Id not found.");
+
+        await dbContext.GroupsTasks.AddAsync(addGroupTask);
         await dbContext.SaveChangesAsync();
 
-        return Ok(groupTask);
+        return Ok(addGroupTask);
     }
 
     [HttpDelete]
-    [Route("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [Route("{groupId:int}/{taskId:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int groupId, [FromRoute] int taskId)
     {
-        var groupTask = await dbContext.GroupsTasks.FindAsync(id);
+        var groupTask = await dbContext.GroupsTasks.FindAsync(groupId, taskId);
 
         if (groupTask == null) return NotFound();
+        
         dbContext.Remove(groupTask);
         await dbContext.SaveChangesAsync();
 

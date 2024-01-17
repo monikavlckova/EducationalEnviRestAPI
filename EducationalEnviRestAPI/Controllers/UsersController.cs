@@ -1,4 +1,4 @@
-﻿using EducationalEnviRestAPI.Data;
+﻿/*using EducationalEnviRestAPI.Data;
 using EducationalEnviRestAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -79,4 +79,4 @@ public class UsersController : ControllerBase
 
         return Ok(user);
     }
-}
+}*/

@@ -35,53 +35,26 @@ public class ClassroomController : ControllerBase
     }
     
     [HttpGet]
-    [Route("getAllStudents/{id:int}")]
-    public async Task<IActionResult> GetAllStudents([FromRoute] int id)
+    [Route("getByTeacherId/{teacherId:int}")]
+    public async Task<IActionResult> GetAllTeachersClassrooms([FromRoute] int teacherId)
     {
-        var query = dbContext.Students.AsQueryable();
-        query = query.Where(student => student.ClassroomId.Equals(id));
-        return Ok(await query.ToListAsync());
-    }
-    
-        
-    [HttpGet]
-    [Route("getAllGroups/{id:int}")]
-    public async Task<IActionResult> GetAllGroups([FromRoute] int id)
-    {
-        var result = (from g in dbContext.Groups.AsQueryable() 
-            join c in dbContext.Classrooms
-                on g.ClassroomId equals c.Id 
-            where c.Id == id
-            select new { g.Id, g.ClassroomId, g.Name });
-        
-        return Ok(await result.ToListAsync());
-    }
-    
-    [HttpGet]
-    [Route("getAllTasks/{id:int}")]
-    public async Task<IActionResult> GetAllTasks([FromRoute] int id)
-    {
-        var result = (from t in dbContext.Tasks.AsQueryable()
-            join ct in dbContext.ClassroomsTasks on t.Id equals ct.ClassroomId
-            where ct.ClassroomId == id
-            select new { t.Id, t.Name, t.Text });
-        
+        var result = (from c in dbContext.Classrooms.AsQueryable()
+            join t in dbContext.Teachers.AsQueryable().Where(x => x.Id == teacherId)
+                on c.TeacherId equals t.Id 
+            select new { c.Id, c.TeacherId, c.Name, c.ImagePath });
+
         return Ok(await result.ToListAsync());
     }
 
     [HttpPut]
     public async Task<IActionResult> Add(Classroom addClassroom)
     {
-        var classroom = new Classroom()
-        {
-            TeacherId = addClassroom.TeacherId,
-            Name = addClassroom.Name
-        };
+        if (addClassroom is null) throw new ArgumentNullException(nameof(addClassroom));
 
-        await dbContext.Classrooms.AddAsync(classroom);
+        await dbContext.Classrooms.AddAsync(addClassroom);
         await dbContext.SaveChangesAsync();
 
-        return Ok(classroom);
+        return Ok(addClassroom);
     }
 
     [HttpPost]
@@ -91,7 +64,9 @@ public class ClassroomController : ControllerBase
         var classroom = await dbContext.Classrooms.FindAsync(id);
 
         if (classroom == null) return NotFound();
+        
         classroom.Name = updateClassroom.Name;
+        classroom.ImagePath = updateClassroom.ImagePath;
 
         await dbContext.SaveChangesAsync();
 
@@ -105,6 +80,7 @@ public class ClassroomController : ControllerBase
         var classroom = await dbContext.Classrooms.FindAsync(id);
 
         if (classroom == null) return NotFound();
+        
         dbContext.Remove(classroom);
         await dbContext.SaveChangesAsync();
 

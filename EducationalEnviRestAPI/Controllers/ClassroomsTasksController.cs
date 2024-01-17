@@ -16,28 +16,37 @@ public class ClassroomsTasksController : ControllerBase
         this.dbContext = dbContext;
     }
     
-    [HttpPut]
-    public async Task<IActionResult> AddTaskToClassroom(int taskId, int classroomId)
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
     {
-        var classroomTask = new ClassroomTask()
-        {
-            ClassroomId = classroomId,
-            TaskId = taskId
-        };
+        return Ok(await dbContext.ClassroomsTasks.ToListAsync());
+    }
+    
+    [HttpPut]
+    public async Task<IActionResult> AddTaskToClassroom(ClassroomTask addClassroomTask)
+    {
+        if (addClassroomTask is null) throw new ArgumentNullException(nameof(addClassroomTask));
+        
+        var existingClassroom = await dbContext.Classrooms.FindAsync(addClassroomTask.ClassroomId);
+        if (existingClassroom == null) return BadRequest("Classroom with the specified Id not found.");
 
-        await dbContext.ClassroomsTasks.AddAsync(classroomTask);
+        var existingTask = await dbContext.Tasks.FindAsync(addClassroomTask.TaskkId);
+        if (existingTask == null) return BadRequest("Task with the specified Id not found.");
+
+        await dbContext.ClassroomsTasks.AddAsync(addClassroomTask);
         await dbContext.SaveChangesAsync();
 
-        return Ok(classroomTask);
+        return Ok(addClassroomTask);
     }
 
     [HttpDelete]
-    [Route("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [Route("{classroomId:int}/{taskId:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int classroomId, [FromRoute] int taskId)
     {
-        var classroomTask = await dbContext.ClassroomsTasks.FindAsync(id);
+        var classroomTask = await dbContext.ClassroomsTasks.FindAsync(classroomId, taskId);
 
         if (classroomTask == null) return NotFound();
+        
         dbContext.Remove(classroomTask);
         await dbContext.SaveChangesAsync();
 

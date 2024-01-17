@@ -28,27 +28,56 @@ public class TasksController : ControllerBase
     {
         var task = await dbContext.Tasks.FindAsync(id);
 
-        if (task == null)
-        {
-            return NotFound();
-        }
+        if (task == null) return NotFound();
 
         return Ok(task);
+    }
+    
+    [HttpGet]
+        [Route("getByClassroomId/{classroomId:int}")]
+    public async Task<IActionResult> GetAllTasksInClassroom([FromRoute] int classroomId)
+    {
+        var result = (from t in dbContext.Tasks.AsQueryable()
+            join ct in dbContext.ClassroomsTasks.AsQueryable().Where(x => x.ClassroomId == classroomId)
+                on t.Id equals ct.TaskkId
+            select new { t.Id, t.Name, t.Text, t.ImagePath });
+        
+        return Ok(await result.ToListAsync());
+    }
+    
+    [HttpGet]
+    [Route("getByGroupId/{groupId:int}")]
+    public async Task<IActionResult> GetAllTasksInGroup([FromRoute] int groupId)
+    {
+        var result = (from t in dbContext.Tasks.AsQueryable() 
+            join gt in dbContext.GroupsTasks.AsQueryable().Where(x => x.GroupId == groupId)
+                on t.Id equals gt.TaskkId 
+            select new { t.Id, t.Name, t.Text, t.ImagePath });
+        
+        return Ok(await result.ToListAsync());
+    }
+
+    [HttpGet]
+    [Route("getByStudentId/{studentId:int}")]
+    public async Task<IActionResult> GetAllStudentsTasks([FromRoute] int studentId)
+    {
+        var result = (from t in dbContext.Tasks.AsQueryable() 
+            join st in dbContext.StudentsTasks.AsQueryable().Where(x => x.StudentId == studentId)
+                on t.Id equals st.TaskkId 
+            select new { t.Id, t.Name, t.Text, t.ImagePath });
+        
+        return Ok(await result.ToListAsync());
     }
     
     [HttpPost]
     public async Task<IActionResult> Add(Taskk addTask)
     {
-        var task = new Taskk()
-        {
-            Name = addTask.Name,
-            Text = addTask.Text
-        };
+        if (addTask is null) throw new ArgumentNullException(nameof(addTask));
 
-        await dbContext.Tasks.AddAsync(task);
+        await dbContext.Tasks.AddAsync(addTask);
         await dbContext.SaveChangesAsync();
 
-        return Ok(task);
+        return Ok(addTask);
     }
 
     [HttpPut]
@@ -58,8 +87,10 @@ public class TasksController : ControllerBase
         var task = await dbContext.Tasks.FindAsync(id);
 
         if (task == null) return NotFound();
+        
         task.Name = updateTask.Name;
         task.Text = updateTask.Text;
+        task.ImagePath = updateTask.ImagePath;
 
         await dbContext.SaveChangesAsync();
 
@@ -74,6 +105,7 @@ public class TasksController : ControllerBase
         var task = await dbContext.Tasks.FindAsync(id);
 
         if (task == null) return NotFound();
+        
         dbContext.Remove(task);
         await dbContext.SaveChangesAsync();
 

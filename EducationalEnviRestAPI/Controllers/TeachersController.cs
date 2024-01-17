@@ -28,44 +28,53 @@ public class TeachersController : ControllerBase
     {
         var teacher = await dbContext.Teachers.FindAsync(id);
 
-        if (teacher == null)
-        {
-            return NotFound();
-        }
+        if (teacher == null) return NotFound();
 
         return Ok(teacher);
     }
     
     [HttpGet]
-    [Route("getAllClassrooms/{id:int}")]
-    public async Task<IActionResult> GetAllClassrooms([FromRoute] int id)
+    [Route("getByEmail/{email}")]
+    public async Task<IActionResult> Get([FromRoute] string email)
     {
-        var result = (from c in dbContext.Classrooms.AsQueryable() 
-            join t in dbContext.Teachers
-                on c.TeacherId equals t.Id 
-            where t.Id == id
-            select new { c.Id, c.TeacherId, c.Name });
+        var teacher = await dbContext.Teachers.AsQueryable().FirstOrDefaultAsync(x => x.Email == email);
         
-        return Ok(await result.ToListAsync());
+        if (teacher == null) return NotFound();
+        
+        return Ok(teacher);
+    }
+    
+    [HttpGet]
+    [Route("getByUserName/{username}")]
+    public async Task<IActionResult> GetByUserName([FromRoute] string username)
+    {
+        var teacher = await dbContext.Teachers.AsQueryable().FirstOrDefaultAsync(x => x.UserName == username);
+        
+        if (teacher == null) return NotFound();
+        
+        return Ok(teacher);
+    }
+    
+    [HttpGet]
+    [Route("getByLogin/{username}/{password}")]
+    public async Task<IActionResult> Get([FromRoute] string username, [FromRoute] string password)
+    {
+        var teacher = await dbContext.Teachers.AsQueryable().FirstOrDefaultAsync(x => x.UserName == username && x.Password == password);
+        
+        if (teacher == null) return NotFound();
+        
+        return Ok(teacher);
     }
 
     [HttpPut]
     public async Task<IActionResult> Add(Teacher addTeacher)
     {
-        var teacher = new Teacher()
-        {
-            Id = addTeacher.Id,
-            Name = addTeacher.Name,
-            LastName = addTeacher.LastName,
-            UserName = addTeacher.UserName,
-            Password = addTeacher.Password,
-            Email = addTeacher.Email
-        };
+        if (addTeacher is null) throw new ArgumentNullException(nameof(addTeacher));
 
-        await dbContext.Teachers.AddAsync(teacher);
+        await dbContext.Teachers.AddAsync(addTeacher);
         await dbContext.SaveChangesAsync();
 
-        return Ok(teacher);
+        return Ok(addTeacher);
     }
     
     [HttpPost]
@@ -75,11 +84,13 @@ public class TeachersController : ControllerBase
         var teacher = await dbContext.Teachers.FindAsync(id);
 
         if (teacher == null) return NotFound();
+        
+        teacher.Email = updateTeacher.Email;
         teacher.Name = updateTeacher.Name;
         teacher.LastName = updateTeacher.LastName;
         teacher.UserName = updateTeacher.UserName;
         teacher.Password = updateTeacher.Password;
-        teacher.Email = updateTeacher.Email;
+        teacher.ImagePath = updateTeacher.ImagePath;
 
         await dbContext.SaveChangesAsync();
 
@@ -93,6 +104,7 @@ public class TeachersController : ControllerBase
         var teacher = await dbContext.Teachers.FindAsync(id);
 
         if (teacher == null) return NotFound();
+        
         dbContext.Remove(teacher);
         await dbContext.SaveChangesAsync();
 
