@@ -13,12 +13,12 @@ public class GroupTaskConfiguration : IEntityTypeConfiguration<GroupTask>
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasOne<Taskk>()
+        builder.HasOne<Task>()
             .WithMany()
-            .HasForeignKey(x => x.TaskkId)
+            .HasForeignKey(x => x.TaskId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasKey(x => new {x.GroupId, x.TaskkId});
+        builder.HasKey(x => new {x.GroupId, TaskkId = x.TaskId});
     }
 }

@@ -3,13 +3,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EducationalEnviRestAPI.Models.Configurations;
 
-public class GroupConfiguration : IEntityTypeConfiguration<Group>
+public class EdgeConfiguration : IEntityTypeConfiguration<Edge>
 {
-    public void Configure(EntityTypeBuilder<Group> builder)
+    public void Configure(EntityTypeBuilder<Edge> builder)
     {
-        builder.HasOne<Classroom>()
+        builder.HasOne<Vertex>()
             .WithMany()
-            .HasForeignKey(x => x.ClassroomId)
+            .HasForeignKey(x => x.fromVertexId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict); //TODO zmen
+        
+        builder.HasOne<Vertex>()
+            .WithMany()
+            .HasForeignKey(x => x.toVertexId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict); //TODO zmen
 

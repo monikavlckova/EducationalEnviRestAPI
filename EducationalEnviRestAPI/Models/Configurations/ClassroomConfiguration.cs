@@ -12,5 +12,10 @@ public class ClassroomConfiguration : IEntityTypeConfiguration<Classroom>
             .HasForeignKey(x => x.TeacherId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict); //TODO zmen
+
+        builder.HasOne<Image>()
+            .WithMany()
+            .HasForeignKey(x => x.ImageId)
+            .IsRequired(false);
     }
 }

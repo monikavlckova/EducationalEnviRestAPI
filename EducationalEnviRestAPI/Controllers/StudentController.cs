@@ -7,11 +7,11 @@ namespace EducationalEnviRestAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentsController : ControllerBase
+public class StudentController : ControllerBase
 {
     private readonly EduEnviAPIDbContext dbContext;
 
-    public StudentsController(EduEnviAPIDbContext dbContext)
+    public StudentController(EduEnviAPIDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
@@ -19,7 +19,7 @@ public class StudentsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await dbContext.Students.ToListAsync());
+        return Ok(await dbContext.Students.OrderBy(x => x.LastName).ToListAsync());
     }
 
     [HttpGet]
@@ -32,17 +32,28 @@ public class StudentsController : ControllerBase
 
         return Ok(student);
     }
-    
-        
+
+    [HttpGet]
+    [Route("getByLogin/{password}")]
+    public async Task<IActionResult> Get([FromRoute] string password)
+    {
+        var student = await dbContext.Students.AsQueryable().FirstOrDefaultAsync(x => x.LoginCode == password);
+
+        if (student == null) return NotFound();
+
+        return Ok(student);
+    }
+
+
     [HttpGet]
     [Route("getByClassroomId/{classroomId:int}")]
     public async Task<IActionResult> GetAllStudentsInClassroom([FromRoute] int classroomId)
     {
-        var students = await dbContext.Students.AsQueryable().Where(x => x.ClassroomId == classroomId).ToListAsync();
-        
+        var students = await dbContext.Students.OrderBy(x => x.LastName).AsQueryable().Where(x => x.ClassroomId == classroomId).ToListAsync();
+
         return Ok(students);
     }
-    
+
     [HttpGet]
     [Route("getByGroupId/{groupId:int}")]
     public async Task<IActionResult> GetAllStudentsInGroup([FromRoute] int groupId)
@@ -52,27 +63,28 @@ public class StudentsController : ControllerBase
             .Where(x => x.GroupId == groupId).Select(x => x.student)
             .ToListAsync();
         return Ok(students);*/
-        
-        
-        var result = (from s in dbContext.Students.AsQueryable() 
-            join sg in dbContext.StudentsGroups.AsQueryable().Where(x => x.GroupId == groupId)
-                on s.Id equals sg.StudentId 
-            select new { s.Id, s.Name, s.LastName, s.UserName, s.ClassroomId, s.Password, s.ImagePath });
-        
+
+
+        var result = from s in dbContext.Students.OrderBy(x => x.LastName).AsQueryable()
+            join sg in dbContext.StudentGroups.AsQueryable().Where(x => x.GroupId == groupId)
+                on s.Id equals sg.StudentId
+            select new { s.Id, s.Name, s.LastName, s.ClassroomId, s.LoginCode, s.ImageId };
+
         return Ok(await result.ToListAsync());
     }
-    
+
     [HttpGet]
     [Route("getByClassroomIdNotInGroupId/{classroomId:int}/{groupId:int}")]
-    public async Task<IActionResult> GetAllStudentsFromClassroomNotInGroup([FromRoute] int classroomId, [FromRoute] int groupId)
+    public async Task<IActionResult> GetAllStudentsFromClassroomNotInGroup([FromRoute] int classroomId,
+        [FromRoute] int groupId)
     {
-        var students = from s in dbContext.Students.AsQueryable().Where(x => x.ClassroomId == classroomId)
-            join sg in dbContext.StudentsGroups.AsQueryable().Where(x => x.GroupId == groupId)
-                on s.Id equals sg.StudentId into _sg 
+        var students = from s in dbContext.Students.OrderBy(x => x.LastName).AsQueryable().Where(x => x.ClassroomId == classroomId)
+            join sg in dbContext.StudentGroups.AsQueryable().Where(x => x.GroupId == groupId)
+                on s.Id equals sg.StudentId into _sg
             from sg in _sg.DefaultIfEmpty() //Performing Left Outer Join
             where sg == null
-            select new { s.Id, s.Name, s.LastName, s.UserName, s.ClassroomId, s.Password, s.ImagePath};
-        
+            select new { s.Id, s.Name, s.LastName, s.ClassroomId, s.LoginCode, s.ImageId };
+
         return Ok(await students.ToListAsync());
     }
 
@@ -94,13 +106,12 @@ public class StudentsController : ControllerBase
         var student = await dbContext.Students.FindAsync(id);
 
         if (student == null) return NotFound();
-        
+
         student.ClassroomId = updateStudent.ClassroomId;
         student.Name = updateStudent.Name;
         student.LastName = updateStudent.LastName;
-        student.UserName = updateStudent.UserName;
-        student.Password = updateStudent.Password;
-        student.ImagePath = updateStudent.ImagePath;
+        student.LoginCode = updateStudent.LoginCode;
+        student.ImageId = updateStudent.ImageId;
 
         await dbContext.SaveChangesAsync();
 
@@ -114,7 +125,7 @@ public class StudentsController : ControllerBase
         var student = await dbContext.Students.FindAsync(id);
 
         if (student == null) return NotFound();
-        
+
         dbContext.Remove(student);
         await dbContext.SaveChangesAsync();
 

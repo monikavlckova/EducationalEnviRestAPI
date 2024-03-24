@@ -7,19 +7,19 @@ namespace EducationalEnviRestAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentsTasksController : ControllerBase
+public class StudentTaskController : ControllerBase
 {
     private readonly EduEnviAPIDbContext dbContext;
 
-    public StudentsTasksController(EduEnviAPIDbContext dbContext)
+    public StudentTaskController(EduEnviAPIDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await dbContext.StudentsTasks.ToListAsync());
+        return Ok(await dbContext.StudentTasks.ToListAsync());
     }
 
     [HttpPut]
@@ -28,10 +28,10 @@ public class StudentsTasksController : ControllerBase
         var existingStudent = await dbContext.Students.FindAsync(addStudentTask.StudentId);
         if (existingStudent == null) return BadRequest("Student with the specified Id not found.");
 
-        var existingTask = await dbContext.Tasks.FindAsync(addStudentTask.TaskkId);
+        var existingTask = await dbContext.Tasks.FindAsync(addStudentTask.TaskId);
         if (existingTask == null) return BadRequest("Task with the specified Id not found.");
 
-        await dbContext.StudentsTasks.AddAsync(addStudentTask);
+        await dbContext.StudentTasks.AddAsync(addStudentTask);
         await dbContext.SaveChangesAsync();
 
         return Ok(addStudentTask);
@@ -41,14 +41,13 @@ public class StudentsTasksController : ControllerBase
     [Route("{studentId:int}/{taskId:int}")]
     public async Task<IActionResult> DeleteStudentTask([FromRoute] int studentId, [FromRoute] int taskId)
     {
-        var studentTask = await dbContext.StudentsTasks.FindAsync(studentId, taskId);
+        var studentTask = await dbContext.StudentTasks.FindAsync(studentId, taskId);
 
         if (studentTask == null) return NotFound();
-        
+
         dbContext.Remove(studentTask);
         await dbContext.SaveChangesAsync();
 
         return Ok(studentTask);
-
     }
 }

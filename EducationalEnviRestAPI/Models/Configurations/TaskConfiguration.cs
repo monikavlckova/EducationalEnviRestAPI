@@ -3,13 +3,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EducationalEnviRestAPI.Models.Configurations;
 
-public class GroupConfiguration : IEntityTypeConfiguration<Group>
+public class TaskConfiguration : IEntityTypeConfiguration<Task>
 {
-    public void Configure(EntityTypeBuilder<Group> builder)
+    public void Configure(EntityTypeBuilder<Task> builder)
     {
-        builder.HasOne<Classroom>()
+        builder.HasOne<Teacher>()
             .WithMany()
-            .HasForeignKey(x => x.ClassroomId)
+            .HasForeignKey(x => x.TeacherId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict); //TODO zmen
+        
+        builder.HasOne<TaskType>()
+            .WithMany()
+            .HasForeignKey(x => x.TaskTypeId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict); //TODO zmen
 

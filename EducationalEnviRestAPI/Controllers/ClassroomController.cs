@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using EducationalEnviRestAPI.Data;
+﻿using EducationalEnviRestAPI.Data;
 using EducationalEnviRestAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +15,13 @@ public class ClassroomController : ControllerBase
     {
         this.dbContext = dbContext;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await dbContext.Classrooms.ToListAsync());
+        return Ok(await dbContext.Classrooms.OrderBy(x => x.Name).ToListAsync());
     }
-    
+
     [HttpGet]
     [Route("{id:int}")]
     public async Task<IActionResult> Get([FromRoute] int id)
@@ -33,15 +32,12 @@ public class ClassroomController : ControllerBase
 
         return Ok(classroom);
     }
-    
+
     [HttpGet]
     [Route("getByTeacherId/{teacherId:int}")]
-    public async Task<IActionResult> GetAllTeachersClassrooms([FromRoute] int teacherId)
+    public async Task<IActionResult> GetTeachersClassrooms([FromRoute] int teacherId)
     {
-        var result = (from c in dbContext.Classrooms.AsQueryable()
-            join t in dbContext.Teachers.AsQueryable().Where(x => x.Id == teacherId)
-                on c.TeacherId equals t.Id 
-            select new { c.Id, c.TeacherId, c.Name, c.ImagePath });
+        var result = dbContext.Classrooms.OrderBy(x => x.Name).Where(x => x.TeacherId == teacherId);
 
         return Ok(await result.ToListAsync());
     }
@@ -64,9 +60,9 @@ public class ClassroomController : ControllerBase
         var classroom = await dbContext.Classrooms.FindAsync(id);
 
         if (classroom == null) return NotFound();
-        
+
         classroom.Name = updateClassroom.Name;
-        classroom.ImagePath = updateClassroom.ImagePath;
+        classroom.ImageId = updateClassroom.ImageId;
 
         await dbContext.SaveChangesAsync();
 
@@ -80,7 +76,7 @@ public class ClassroomController : ControllerBase
         var classroom = await dbContext.Classrooms.FindAsync(id);
 
         if (classroom == null) return NotFound();
-        
+
         dbContext.Remove(classroom);
         await dbContext.SaveChangesAsync();
 

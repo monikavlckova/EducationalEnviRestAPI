@@ -7,33 +7,33 @@ namespace EducationalEnviRestAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ClassroomsTasksController : ControllerBase
+public class ClassroomTaskController : ControllerBase
 {
     private readonly EduEnviAPIDbContext dbContext;
 
-    public ClassroomsTasksController(EduEnviAPIDbContext dbContext)
+    public ClassroomTaskController(EduEnviAPIDbContext dbContext)
     {
         this.dbContext = dbContext;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await dbContext.ClassroomsTasks.ToListAsync());
+        return Ok(await dbContext.ClassroomTasks.ToListAsync());
     }
-    
+
     [HttpPut]
     public async Task<IActionResult> AddTaskToClassroom(ClassroomTask addClassroomTask)
     {
         if (addClassroomTask is null) throw new ArgumentNullException(nameof(addClassroomTask));
-        
+
         var existingClassroom = await dbContext.Classrooms.FindAsync(addClassroomTask.ClassroomId);
         if (existingClassroom == null) return BadRequest("Classroom with the specified Id not found.");
 
-        var existingTask = await dbContext.Tasks.FindAsync(addClassroomTask.TaskkId);
+        var existingTask = await dbContext.Tasks.FindAsync(addClassroomTask.TaskId);
         if (existingTask == null) return BadRequest("Task with the specified Id not found.");
 
-        await dbContext.ClassroomsTasks.AddAsync(addClassroomTask);
+        await dbContext.ClassroomTasks.AddAsync(addClassroomTask);
         await dbContext.SaveChangesAsync();
 
         return Ok(addClassroomTask);
@@ -43,10 +43,10 @@ public class ClassroomsTasksController : ControllerBase
     [Route("{classroomId:int}/{taskId:int}")]
     public async Task<IActionResult> Delete([FromRoute] int classroomId, [FromRoute] int taskId)
     {
-        var classroomTask = await dbContext.ClassroomsTasks.FindAsync(classroomId, taskId);
+        var classroomTask = await dbContext.ClassroomTasks.FindAsync(classroomId, taskId);
 
         if (classroomTask == null) return NotFound();
-        
+
         dbContext.Remove(classroomTask);
         await dbContext.SaveChangesAsync();
 

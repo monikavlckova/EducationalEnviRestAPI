@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EducationalEnviRestAPI.Models;
 
-public class Group
+public class Edge
 {
     [Key] [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    public int ClassroomId { get; set; }
-    [Column(TypeName = "varchar(50)")] public string Name { get; set; }
+    public string Value { get; set; }
     public int? ImageId { get; set; }
+    public int fromVertexId { get; set; }
+    public int toVertexId { get; set; }
 }

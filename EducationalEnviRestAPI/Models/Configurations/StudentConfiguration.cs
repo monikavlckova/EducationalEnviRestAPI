@@ -12,5 +12,11 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
             .HasForeignKey(x => x.ClassroomId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict); //TODO zmen
+        
+        builder.HasOne<Image>()
+            .WithMany()
+            .HasForeignKey(x => x.ImageId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict); //TODO zmen
     }
 }

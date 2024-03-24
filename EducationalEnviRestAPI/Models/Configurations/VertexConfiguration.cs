@@ -3,16 +3,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EducationalEnviRestAPI.Models.Configurations;
 
-public class GroupConfiguration : IEntityTypeConfiguration<Group>
+public class VertexConfiguration : IEntityTypeConfiguration<Vertex>
 {
-    public void Configure(EntityTypeBuilder<Group> builder)
+    public void Configure(EntityTypeBuilder<Vertex> builder)
     {
-        builder.HasOne<Classroom>()
+        builder.HasOne<Task>()
             .WithMany()
-            .HasForeignKey(x => x.ClassroomId)
+            .HasForeignKey(x => x.TaskId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Restrict); //TODO zmen
-
+        
         builder.HasOne<Image>()
             .WithMany()
             .HasForeignKey(x => x.ImageId)

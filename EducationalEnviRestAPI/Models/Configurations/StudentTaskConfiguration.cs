@@ -13,12 +13,12 @@ public class StudentTaskConfiguration : IEntityTypeConfiguration<StudentTask>
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasOne<Taskk>()
+        builder.HasOne<Task>()
             .WithMany()
-            .HasForeignKey(x => x.TaskkId)
+            .HasForeignKey(x => x.TaskId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasKey(x => new {x.StudentId, x.TaskkId});
+        builder.HasKey(x => new {x.StudentId, TaskkId = x.TaskId});
     }
 }
